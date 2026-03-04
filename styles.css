@@ -1,0 +1,122 @@
+/*
+  Minimal styling for a clean personal homepage + SVG tree prototype.
+  (No framework; intended for GitHub Pages.)
+*/
+
+:root {
+  color-scheme: light dark;
+  --bg: #0b0f16;
+  --panel: rgba(255, 255, 255, 0.06);
+  --text: rgba(255, 255, 255, 0.92);
+  --muted: rgba(255, 255, 255, 0.68);
+  --link: rgba(255, 255, 255, 0.28);
+  --node: rgba(255, 255, 255, 0.88);
+  --nodeDim: rgba(255, 255, 255, 0.35);
+  --accent: #7dd3fc;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #ffffff;
+    --panel: rgba(2, 6, 23, 0.04);
+    --text: rgba(2, 6, 23, 0.92);
+    --muted: rgba(2, 6, 23, 0.65);
+    --link: rgba(2, 6, 23, 0.20);
+    --node: rgba(2, 6, 23, 0.88);
+    --nodeDim: rgba(2, 6, 23, 0.35);
+    --accent: #0369a1;
+  }
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: var(--bg);
+  color: var(--text);
+}
+
+.siteHeader {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(10px);
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
+}
+
+.siteHeader__name {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 18px 20px;
+  font-size: 18px;
+  letter-spacing: 0.2px;
+  font-weight: 600;
+}
+
+.main {
+  height: calc(100vh - 57px);
+}
+
+.treeSection {
+  height: 100%;
+  width: 100%;
+}
+
+.treeSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+}
+.treeSvg:active { cursor: grabbing; }
+
+/* D3-drawn elements */
+.treeLink {
+  fill: none;
+  stroke: var(--link);
+  stroke-width: 1.25;
+}
+
+.treeNode circle {
+  stroke: color-mix(in srgb, var(--node) 45%, transparent);
+  stroke-width: 1;
+}
+
+.treeNode--internal circle {
+  fill: color-mix(in srgb, var(--accent) 18%, var(--panel));
+}
+.treeNode--leaf circle {
+  fill: color-mix(in srgb, var(--node) 10%, var(--panel));
+}
+.treeNode--collapsed circle {
+  fill: color-mix(in srgb, var(--accent) 22%, var(--panel));
+}
+
+.treeNode text {
+  font-size: 13px;
+  fill: var(--text);
+  paint-order: stroke;
+  stroke: color-mix(in srgb, var(--bg) 85%, transparent);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+.treeNode:hover text {
+  fill: color-mix(in srgb, var(--text) 100%, var(--accent));
+}
+
+.hint {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
+  border-radius: 10px;
+  padding: 10px 12px;
+  user-select: none;
+  pointer-events: none;
+}

@@ -1,10 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My First GitHub Site</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rodrigo A. Sandon Veliz</title>
+    <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-    <h1>Hello, World!</h1>
-    <p>This is my first website hosted on GitHub Pages.</p>
+    <header class="siteHeader">
+        <div class="siteHeader__name">Rodrigo A. Sandon Veliz</div>
+    </header>
+
+    <main class="main">
+        <section class="treeSection" aria-label="Life areas tree">
+            <svg id="treeSvg" class="treeSvg" role="img" aria-label="Interactive life areas tree"></svg>
+        </section>
+    </main>
+
+    <div class="hint">Drag to pan • Scroll/pinch to zoom • Click nodes to expand/collapse</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+    <script src="./tree.js"></script>
 </body>
 </html>
