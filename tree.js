@@ -4,36 +4,16 @@ const LIFE_TREE_DATA = {
   name: "Life",
   children: [
     {
-      name: "Career",
-      children: [{ name: "Roles" }, { name: "Projects" }, { name: "Skills" }],
-    },
-    {
-      name: "Learning",
-      children: [{ name: "Topics" }, { name: "Books" }, { name: "Languages" }],
+      name: "Work",
+      children: [{ name: "Finance" }, { name: "Home" }, { name: "Life structuring" }],
     },
     {
       name: "Health",
-      children: [{ name: "Fitness" }, { name: "Nutrition" }, { name: "Sleep" }],
+      children: [{ name: "Body exercise" }, { name: "Mind exercise" }],
     },
     {
       name: "Relationships",
-      children: [{ name: "Family" }, { name: "Friends" }, { name: "Mentors" }],
-    },
-    {
-      name: "Creative",
-      children: [{ name: "Writing" }, { name: "Music" }, { name: "Design" }],
-    },
-    {
-      name: "Community",
-      children: [{ name: "Volunteering" }, { name: "Events" }, { name: "Giving" }],
-    },
-    {
-      name: "Adventure",
-      children: [{ name: "Travel" }, { name: "Outdoors" }, { name: "Challenges" }],
-    },
-    {
-      name: "Finance",
-      children: [{ name: "Saving" }, { name: "Investing" }, { name: "Planning" }],
+      children: [{ name: "Family" }, { name: "Friends" }],
     },
   ],
 };
