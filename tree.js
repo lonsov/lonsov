@@ -5,16 +5,68 @@ const LIFE_TREE_DATA = {
   children: [
     {
       name: "Work",
-      children: [{ name: "Finance" }, { name: "Home" }, { name: "Life structuring" }],
+      children: [
+        { name: "Finance" },
+        { name: "Home" },
+        { name: "Life structuring" },
+        { name: "Goals" },
+        { name: "Job" },
+        {
+          name: "Projects",
+          children: [
+            { name: "AI-Assisted Applications + Interview Prep Platform" },
+            {
+              name: "AI-Assisted General Integrated Automation + Learning Platform",
+              children: [
+                {
+                  name: "Why it should be a learning platform",
+                  children: [{ name: "To know what you build" }],
+                },
+                {
+                  name: "Integrations",
+                  children: [{ name: "openclaw" }],
+                },
+              ],
+            },
+            { name: "Foundational Research" },
+          ],
+        },
+      ],
     },
     {
       name: "Health",
-      children: [{ name: "Body exercise" }, { name: "Mind exercise" }],
+      children: [
+        {
+          name: "Body",
+          children: [
+            { name: "Basketball" },
+            { name: "Tennis" },
+            { name: "Skating" },
+            { name: "Climbing" },
+            { name: "Swimming" },
+            { name: "Cycling" },
+            { name: "Strength" },
+            { name: "Focus points" },
+          ],
+        },
+        {
+          name: "Mind",
+          children: [
+            { name: "Logs" },
+            {
+              name: "Transformation mediums",
+              children: [{ name: "Math" }, { name: "Physics" }, { name: "Computer science" }, { name: "AI" }],
+            },
+          ],
+        },
+        { name: "Goals" },
+      ],
     },
     {
       name: "Relationships",
-      children: [{ name: "Family" }, { name: "Friends" }],
+      children: [{ name: "Family" }, { name: "Friends" }, { name: "Goals" }, { name: "Unfamiliars" }],
     },
+    { name: "OS 1" },
   ],
 };
 
@@ -78,7 +130,31 @@ function initLifeTree() {
       // Left-to-right growth: depth controls horizontal distance (y-axis here).
       d.y = d.depth * state.nodeColSpacing;
     });
-    return { nodes: root.descendants(), links: root.links() };
+    const nodes = root.descendants();
+    const links = root.links();
+
+    // Position "OS 1" to the far right and roughly centered vertically.
+    const os1 = nodes.find((d) => d.data?.name === "OS 1");
+    if (os1) {
+      const otherNodes = nodes.filter((d) => d !== os1);
+      const maxY = (d3.max(otherNodes, (d) => d.y) ?? 0) + state.nodeColSpacing;
+      os1.y = maxY;
+
+      const goalNodes = nodes.filter((d) => d.data?.name === "Goals");
+      const centerFromGoals = goalNodes.length
+        ? d3.mean(goalNodes, (d) => d.x)
+        : (() => {
+            const nonRoot = otherNodes.filter((d) => d.depth > 0);
+            const minX = d3.min(nonRoot, (d) => d.x);
+            const maxX = d3.max(nonRoot, (d) => d.x);
+            if (typeof minX === "number" && typeof maxX === "number") return (minX + maxX) / 2;
+            return 0;
+          })();
+
+      os1.x = typeof centerFromGoals === "number" ? centerFromGoals : 0;
+    }
+
+    return { nodes, links };
   }
 
   function update({ fit = false } = {}) {
@@ -89,8 +165,16 @@ function initLifeTree() {
 
     const { nodes, links } = layoutTree();
 
+    // Ensure stable node ids before we key any joins off them.
+    nodes.forEach((d) => {
+      if (!d.id) d.id = ++state.i;
+    });
+
+    // Hide the default tree link "Life → OS 1"; we'll connect Goals → OS 1 instead.
+    const treeLinks = links.filter((l) => l.target?.data?.name !== "OS 1");
+
     // Links
-    const linkSel = g.selectAll("path.treeLink").data(links, (d) => d.target.id);
+    const linkSel = g.selectAll("path.treeLink").data(treeLinks, (d) => d.target.id);
 
     linkSel
       .enter()
@@ -102,9 +186,28 @@ function initLifeTree() {
 
     linkSel.exit().remove();
 
+    // Cross-links: connect all visible "Goals" nodes to the single "OS 1" node.
+    const os1 = nodes.find((d) => d.data?.name === "OS 1");
+    const goalNodes = nodes.filter((d) => d.data?.name === "Goals");
+    const crossLinks =
+      os1 && goalNodes.length ? goalNodes.map((gNode) => ({ source: gNode, target: os1 })) : [];
+
+    const crossSel = g
+      .selectAll("path.treeLinkCross")
+      .data(crossLinks, (d) => `${d.source.id}->${d.target.id}`);
+
+    crossSel
+      .enter()
+      .append("path")
+      .attr("class", "treeLink treeLinkCross")
+      .attr("d", (d) => linkGen({ source: d.source, target: d.target }))
+      .merge(crossSel)
+      .attr("d", (d) => linkGen({ source: d.source, target: d.target }));
+
+    crossSel.exit().remove();
+
     // Nodes
     const nodeSel = g.selectAll("g.treeNode").data(nodes, (d) => {
-      if (!d.id) d.id = ++state.i;
       return d.id;
     });
 
